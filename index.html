@@ -1,0 +1,5532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>EF Score</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#050505;
+    --surface:#0d0d0d;
+    --surface2:#121212;
+    --border:#242424;
+    --border2:#303030;
+    --text:#f5f5f5;
+    --muted:#858585;
+    --blue:#1677ff;
+    --green:#22c55e;
+    --red:#ef4444;
+    --yellow:#f5b942;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,Helvetica,sans-serif;
+    min-height:100vh;
+}
+
+button,
+input,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    min-height:100vh;
+    padding-bottom:90px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.topbar{
+    height:74px;
+    padding:16px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    border-bottom:1px solid #111;
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(5,5,5,.96);
+    backdrop-filter:blur(12px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.brand img{
+    width:38px;
+    height:38px;
+    object-fit:contain;
+}
+
+.brand-name{
+    font-size:19px;
+    font-weight:800;
+    letter-spacing:-.5px;
+}
+
+.header-title{
+    font-size:14px;
+    color:var(--muted);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+    width:min(1100px,100%);
+    margin:auto;
+    padding:25px 20px;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-title{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-1px;
+}
+
+.page-subtitle{
+    color:var(--muted);
+    font-size:13px;
+    margin-top:5px;
+}
+
+.page-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:24px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn{
+    border:1px solid var(--border2);
+    background:#111;
+    color:white;
+    border-radius:12px;
+    padding:11px 16px;
+    font-weight:700;
+    transition:.15s;
+}
+
+.btn:hover{
+    background:#191919;
+}
+
+.btn-primary{
+    background:white;
+    color:#050505;
+    border-color:white;
+}
+
+.btn-primary:hover{
+    background:#ddd;
+}
+
+.btn-danger{
+    color:#ff6b6b;
+}
+
+.icon-btn{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:#090909;
+    color:white;
+    font-size:23px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:8px;
+}
+
+.stat-value{
+    font-size:24px;
+    font-weight:800;
+}
+
+.stat-value.green{
+    color:var(--green);
+}
+
+.stat-value.red{
+    color:var(--red);
+}
+
+.stat-value.blue{
+    color:#5b9cff;
+}
+
+/* =========================
+   HOME
+========================= */
+
+.hero{
+    background:
+        radial-gradient(circle at 100% 0%,rgba(255,255,255,.08),transparent 35%),
+        var(--surface);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:28px;
+    margin-bottom:18px;
+}
+
+.hero h1{
+    font-size:32px;
+    letter-spacing:-1.2px;
+}
+
+.hero p{
+    color:var(--muted);
+    margin-top:7px;
+    font-size:14px;
+}
+
+.section-title{
+    font-size:17px;
+    font-weight:800;
+    margin-bottom:13px;
+}
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:18px;
+}
+
+.quick{
+    padding:18px;
+    border:1px solid var(--border);
+    border-radius:16px;
+    background:#0b0b0b;
+    transition:.15s;
+}
+
+.quick:hover{
+    border-color:#444;
+    transform:translateY(-1px);
+}
+
+.quick-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    background:#171717;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:12px;
+}
+
+.quick-title{
+    font-weight:700;
+}
+
+.quick-text{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:4px;
+}
+
+/* =========================
+   EVENTS
+========================= */
+
+.event-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+.event-card{
+    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:18px;
+    padding:18px;
+    cursor:pointer;
+    transition:.15s;
+}
+
+.event-card:hover{
+    border-color:#3b3b3b;
+}
+
+.event-top{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.event-name{
+    font-size:17px;
+    font-weight:800;
+}
+
+.event-date{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:5px;
+}
+
+.event-profit{
+    font-size:17px;
+    font-weight:800;
+}
+
+.event-bottom{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    border-top:1px solid #1b1b1b;
+    margin-top:16px;
+    padding-top:14px;
+}
+
+.event-mini{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.empty{
+    border:1px dashed #303030;
+    border-radius:18px;
+    padding:40px 20px;
+    text-align:center;
+    color:var(--muted);
+}
+
+/* =========================
+   EVENT DETAIL
+========================= */
+
+.back{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    color:#aaa;
+    background:none;
+    border:0;
+    padding:0;
+    margin-bottom:18px;
+}
+
+.event-detail-head{
+    margin-bottom:18px;
+}
+
+.event-detail-name{
+    font-size:27px;
+    font-weight:800;
+}
+
+.event-detail-date{
+    color:var(--muted);
+    margin-top:4px;
+    font-size:13px;
+}
+
+.tabs{
+    display:flex;
+    gap:6px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:18px;
+    overflow-x:auto;
+}
+
+.tab{
+    background:none;
+    border:0;
+    color:#777;
+    padding:12px 15px;
+    font-weight:700;
+    white-space:nowrap;
+    border-bottom:2px solid transparent;
+}
+
+.tab.active{
+    color:white;
+    border-bottom-color:white;
+}
+
+.detail-section{
+    display:none;
+}
+
+.detail-section.active{
+    display:block;
+}
+
+.money-row{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    padding:15px 0;
+    border-bottom:1px solid #1b1b1b;
+}
+
+.money-row:last-child{
+    border-bottom:0;
+}
+
+.money-name{
+    font-weight:700;
+}
+
+.money-description{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:3px;
+}
+
+.money-value{
+    font-weight:800;
+    white-space:nowrap;
+}
+
+.money-value.green{
+    color:var(--green);
+}
+
+.money-value.red{
+    color:var(--red);
+}
+
+.result-box{
+    background:#0c0c0c;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:22px;
+    margin-bottom:15px;
+}
+
+.result-title{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.result-big{
+    font-size:34px;
+    font-weight:900;
+    margin-top:5px;
+}
+
+.split-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:15px;
+}
+
+.split{
+    background:#101010;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:16px;
+}
+
+.split-name{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.split-value{
+    font-size:21px;
+    font-weight:800;
+    margin-top:6px;
+}
+
+/* =========================
+   FORMS
+========================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.form-group.full{
+    grid-column:1/-1;
+}
+
+.form-group label{
+    color:#aaa;
+    font-size:12px;
+    font-weight:600;
+}
+
+.input{
+    width:100%;
+    background:#090909;
+    border:1px solid #2b2b2b;
+    color:white;
+    border-radius:12px;
+    padding:13px 14px;
+    outline:none;
+}
+
+.input:focus{
+    border-color:#666;
+}
+
+textarea.input{
+    min-height:90px;
+    resize:vertical;
+}
+
+select.input{
+    appearance:auto;
+}
+
+.form-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:18px;
+}
+
+/* =========================
+   FINANCE
+========================= */
+
+.finance-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:15px;
+}
+
+.finance-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 0;
+    border-bottom:1px solid #1b1b1b;
+}
+
+.finance-item:last-child{
+    border-bottom:0;
+}
+
+.finance-left{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.finance-title{
+    font-weight:700;
+}
+
+.finance-sub{
+    font-size:11px;
+    color:var(--muted);
+}
+
+.finance-number{
+    font-weight:800;
+}
+
+/* =========================
+   INVESTMENTS
+========================= */
+
+.investment-card{
+    margin-bottom:12px;
+}
+
+.investment-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.investment-name{
+    font-weight:800;
+}
+
+.investment-status{
+    color:var(--green);
+    font-size:12px;
+}
+
+.investment-value{
+    font-size:25px;
+    font-weight:900;
+    margin-top:10px;
+}
+
+.progress{
+    width:100%;
+    height:7px;
+    background:#202020;
+    border-radius:99px;
+    overflow:hidden;
+    margin-top:14px;
+}
+
+.progress-bar{
+    height:100%;
+    background:white;
+    width:0%;
+    border-radius:99px;
+}
+
+.investment-info{
+    display:flex;
+    justify-content:space-between;
+    margin-top:9px;
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* =========================
+   PROGRAM
+========================= */
+
+.program-tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+}
+
+.program-tab{
+    border:1px solid var(--border);
+    background:#0d0d0d;
+    color:#999;
+    padding:10px 15px;
+    border-radius:11px;
+    font-weight:700;
+}
+
+.program-tab.active{
+    background:white;
+    color:black;
+    border-color:white;
+}
+
+.travel-result{
+    margin-top:15px;
+    background:#101010;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:18px;
+}
+
+.travel-total{
+    font-size:28px;
+    font-weight:900;
+}
+
+.restaurant{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    padding:17px 0;
+    border-bottom:1px solid #1c1c1c;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.78);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(520px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    background:#0b0b0b;
+    border:1px solid #303030;
+    border-radius:22px;
+    padding:23px;
+    box-shadow:0 20px 80px rgba(0,0,0,.7);
+}
+
+.modal-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:22px;
+}
+
+.modal-title{
+    font-size:23px;
+    font-weight:800;
+}
+
+.close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid #303030;
+    background:#111;
+    color:white;
+    font-size:21px;
+}
+
+.modal-form{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:7px;
+}
+
+.modal-actions .btn{
+    flex:1;
+}
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:95px;
+    transform:translate(-50%,20px);
+    background:#f5f5f5;
+    color:#050505;
+    padding:12px 17px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:700;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+    z-index:200;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:76px;
+    background:rgba(5,5,5,.97);
+    border-top:1px solid #1b1b1b;
+    display:flex;
+    justify-content:center;
+    z-index:50;
+    backdrop-filter:blur(15px);
+}
+
+.nav-inner{
+    width:min(900px,100%);
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+}
+
+.nav-item{
+    border:0;
+    background:none;
+    color:#666;
+    min-width:65px;
+    height:60px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    font-size:10px;
+}
+
+.nav-item.active{
+    color:white;
+}
+
+.nav-icon{
+    width:20px;
+    height:20px;
+}
+
+/* =========================
+   SVG
+========================= */
+
+svg{
+    width:20px;
+    height:20px;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:760px){
+
+    .topbar{
+        padding:14px 17px;
+    }
+
+    .main{
+        padding:22px 15px 25px;
+    }
+
+    .page-title{
+        font-size:25px;
+    }
+
+    .cards{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .quick-grid{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .finance-grid{
+        grid-template-columns:1fr;
+    }
+
+    .split-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero{
+        padding:22px;
+    }
+
+    .hero h1{
+        font-size:27px;
+    }
+
+    .event-profit{
+        font-size:15px;
+    }
+
+    .modal{
+        align-items:flex-end;
+        padding:0;
+    }
+
+    .modal-box{
+        width:100%;
+        max-height:88vh;
+        border-radius:22px 22px 0 0;
+        padding:21px;
+    }
+
+    .bottom-nav{
+        height:72px;
+    }
+
+    .nav-item{
+        min-width:52px;
+    }
+
+    .nav-item span{
+        font-size:9px;
+    }
+
+}
+
+@media(max-width:400px){
+
+    .cards{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .stat-value{
+        font-size:20px;
+    }
+
+    .page-head{
+        align-items:flex-start;
+    }
+
+}
+/* =========================
+   SPLASH SCREEN
+========================= */
+
+#splash-screen{
+    position:fixed;
+    inset:0;
+    background:#000;
+    z-index:9999;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    opacity:1;
+    visibility:visible;
+
+    transition:
+        opacity .6s ease,
+        visibility .6s ease;
+}
+
+#splash-screen.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+
+.splash-content{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    animation:splashAppear .8s ease;
+}
+
+.splash-logo{
+    width:155px;
+    height:155px;
+    object-fit:contain;
+}
+
+.splash-loading-text{
+    margin-top:25px;
+
+    color:#777;
+
+    font-size:11px;
+    font-weight:700;
+
+    letter-spacing:2px;
+}
+
+.splash-loading-bar{
+    width:110px;
+    height:2px;
+
+    background:#222;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+    margin-top:12px;
+}
+
+.splash-loading-progress{
+    width:35%;
+    height:100%;
+
+    background:#fff;
+
+    border-radius:10px;
+
+    animation:splashProgress 1.4s ease-in-out infinite;
+}
+
+@keyframes splashAppear{
+
+    from{
+        opacity:0;
+        transform:scale(.90);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+@keyframes splashProgress{
+
+    0%{
+        transform:translateX(-120%);
+    }
+
+    100%{
+        transform:translateX(400%);
+    }
+
+}
+</style>
+</head>
+
+<body>
+<div id="splash-screen">
+
+    <div class="splash-content">
+
+        <img
+            src="logo.png"
+            alt="EF Score"
+            class="splash-logo"
+        >
+
+        <div class="splash-loading-text">
+            CARREGANDO...
+        </div>
+
+        <div class="splash-loading-bar">
+            <div class="splash-loading-progress"></div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="app">
+
+<!-- =========================
+     TOP BAR
+========================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <img src="logo.png" alt="EF Score">
+
+        <div class="brand-name">
+            EF Score
+        </div>
+
+    </div>
+
+    <div class="header-title" id="header-title">
+        Controle financeiro
+    </div>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="main">
+
+
+<!-- =========================
+     HOME
+========================= -->
+
+<section class="page active" id="page-home">
+
+    <div class="hero">
+
+        <h1>Olá, Mateus.</h1>
+
+        <p>
+            Controle seus eventos, gastos, investimentos e resultados.
+        </p>
+
+        <div style="margin-top:18px">
+
+            <button
+                class="btn btn-primary"
+                id="home-new-event"
+            >
+                + Novo evento
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="stat-label">
+                Ganhos
+            </div>
+
+            <div
+                class="stat-value green"
+                id="home-gains"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Despesas
+            </div>
+
+            <div
+                class="stat-value red"
+                id="home-expenses"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Lucro líquido
+            </div>
+
+            <div
+                class="stat-value blue"
+                id="home-profit"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Eventos
+            </div>
+
+            <div
+                class="stat-value"
+                id="home-events"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="margin-top:25px">
+
+        <div class="section-title">
+            Acesso rápido
+        </div>
+
+
+        <div class="quick-grid">
+
+            <div
+                class="quick"
+                data-page="events"
+            >
+
+                <div class="quick-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="17" rx="2"/>
+                        <path d="M8 2v4M16 2v4M3 9h18"/>
+                    </svg>
+
+                </div>
+
+                <div class="quick-title">
+                    Eventos
+                </div>
+
+                <div class="quick-text">
+                    Controle seus trabalhos
+                </div>
+
+            </div>
+
+
+            <div
+                class="quick"
+                data-page="finance"
+            >
+
+                <div class="quick-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="14" rx="2"/>
+                        <path d="M3 10h18"/>
+                        <circle cx="16" cy="14" r="1"/>
+                    </svg>
+
+                </div>
+
+                <div class="quick-title">
+                    Finanças
+                </div>
+
+                <div class="quick-text">
+                    Visão geral financeira
+                </div>
+
+            </div>
+
+
+            <div
+                class="quick"
+                data-page="investments"
+            >
+
+                <div class="quick-icon">
+
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 19V5"/>
+                        <path d="M4 19h17"/>
+                        <path d="m7 15 4-5 3 3 5-7"/>
+                    </svg>
+
+                </div>
+
+                <div class="quick-title">
+                    Investimentos
+                </div>
+
+                <div class="quick-text">
+                    Planeje seus equipamentos
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     EVENTS
+========================= -->
+
+<section class="page" id="page-events">
+
+    <div class="page-head">
+
+        <div>
+
+            <div class="page-title">
+                Eventos
+            </div>
+
+            <div class="page-subtitle">
+                Controle completo dos seus trabalhos
+            </div>
+
+        </div>
+
+        <button
+            class="icon-btn"
+            id="events-new-event"
+            aria-label="Novo evento"
+        >
+            +
+        </button>
+
+    </div>
+
+
+    <div
+        class="event-list"
+        id="event-list"
+    ></div>
+
+</section>
+
+
+
+<!-- =========================
+     EVENT DETAIL
+========================= -->
+
+<section class="page" id="page-event-detail">
+
+    <button
+        class="back"
+        id="back-events"
+    >
+        ← Voltar para eventos
+    </button>
+
+
+    <div class="event-detail-head">
+
+        <div
+            class="event-detail-name"
+            id="detail-event-name"
+        >
+            Evento
+        </div>
+
+        <div
+            class="event-detail-date"
+            id="detail-event-date"
+        >
+        </div>
+
+    </div>
+
+
+    <div class="tabs">
+
+        <button
+            class="tab active"
+            data-detail-tab="gains"
+        >
+            Ganhos
+        </button>
+
+        <button
+            class="tab"
+            data-detail-tab="expenses"
+        >
+            Despesas
+        </button>
+
+        <button
+            class="tab"
+            data-detail-tab="result"
+        >
+            Resultado
+        </button>
+
+    </div>
+
+
+    <div
+        class="detail-section active"
+        id="detail-gains"
+    >
+
+        <div class="card">
+
+            <div class="page-head" style="margin-bottom:5px">
+
+                <div class="section-title" style="margin:0">
+                    Ganhos
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    id="add-gain"
+                >
+                    + Adicionar
+                </button>
+
+            </div>
+
+
+            <div id="gain-list"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="detail-section"
+        id="detail-expenses"
+    >
+
+        <div class="card">
+
+            <div class="page-head" style="margin-bottom:5px">
+
+                <div class="section-title" style="margin:0">
+                    Despesas
+                </div>
+
+                <button
+                    class="btn btn-primary"
+                    id="add-expense"
+                >
+                    + Adicionar
+                </button>
+
+            </div>
+
+
+            <div id="expense-list"></div>
+
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="detail-section"
+        id="detail-result"
+    >
+
+        <div class="result-box">
+
+            <div class="result-title">
+                Lucro líquido
+            </div>
+
+            <div
+                class="result-big"
+                id="detail-profit"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="split-grid">
+
+            <div class="split">
+
+                <div class="split-name">
+                    Empresa · 50%
+                </div>
+
+                <div
+                    class="split-value"
+                    id="split-company"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+
+            <div class="split">
+
+                <div class="split-name">
+                    Mateus · 25%
+                </div>
+
+                <div
+                    class="split-value"
+                    id="split-mateus"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+
+            <div class="split">
+
+                <div class="split-name">
+                    Felipe · 25%
+                </div>
+
+                <div
+                    class="split-value"
+                    id="split-felipe"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div
+            style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap"
+        >
+
+            <button
+                class="btn"
+                id="edit-event"
+            >
+                Editar evento
+            </button>
+
+            <button
+                class="btn btn-danger"
+                id="delete-event"
+            >
+                Excluir evento
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     FINANCE
+========================= -->
+
+<section class="page" id="page-finance">
+
+    <div class="page-head">
+
+        <div>
+
+            <div class="page-title">
+                Finanças
+            </div>
+
+            <div class="page-subtitle">
+                Visão geral de todos os eventos
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="stat-label">
+                Ganhos totais
+            </div>
+
+            <div
+                class="stat-value green"
+                id="finance-gains"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Despesas totais
+            </div>
+
+            <div
+                class="stat-value red"
+                id="finance-expenses"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Lucro líquido
+            </div>
+
+            <div
+                class="stat-value blue"
+                id="finance-profit"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Investido
+            </div>
+
+            <div
+                class="stat-value"
+                id="finance-investments"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="margin-top:18px">
+
+        <div class="card">
+
+            <div class="section-title">
+                Resumo por evento
+            </div>
+
+            <div id="finance-events"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     REPORTS
+========================= -->
+
+<section class="page" id="page-reports">
+
+    <div class="page-head">
+
+        <div>
+
+            <div class="page-title">
+                Relatórios
+            </div>
+
+            <div class="page-subtitle">
+                Resultado geral do seu trabalho
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="stat-label">
+                Receita
+            </div>
+
+            <div
+                class="stat-value green"
+                id="report-gains"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Custos
+            </div>
+
+            <div
+                class="stat-value red"
+                id="report-expenses"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Lucro
+            </div>
+
+            <div
+                class="stat-value blue"
+                id="report-profit"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Margem
+            </div>
+
+            <div
+                class="stat-value"
+                id="report-margin"
+            >
+                0%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="margin-top:18px">
+
+        <div class="card">
+
+            <div class="section-title">
+                Divisão do lucro
+            </div>
+
+
+            <div class="money-row">
+
+                <div class="money-name">
+                    Empresa
+                </div>
+
+                <div
+                    class="money-value"
+                    id="report-company"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+
+            <div class="money-row">
+
+                <div class="money-name">
+                    Mateus
+                </div>
+
+                <div
+                    class="money-value"
+                    id="report-mateus"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+
+            <div class="money-row">
+
+                <div class="money-name">
+                    Felipe
+                </div>
+
+                <div
+                    class="money-value"
+                    id="report-felipe"
+                >
+                    R$ 0,00
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     INVESTMENTS
+========================= -->
+
+<section class="page" id="page-investments">
+
+    <div class="page-head">
+
+        <div>
+
+            <div class="page-title">
+                Investimentos
+            </div>
+
+            <div class="page-subtitle">
+                Planeje equipamentos e melhorias
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            id="new-investment"
+        >
+            + Investimento
+        </button>
+
+    </div>
+
+
+    <div class="cards">
+
+        <div class="card">
+
+            <div class="stat-label">
+                Total investido
+            </div>
+
+            <div
+                class="stat-value"
+                id="investment-total"
+            >
+                R$ 0,00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="stat-label">
+                Investimentos
+            </div>
+
+            <div
+                class="stat-value"
+                id="investment-count"
+            >
+                0
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div style="margin-top:18px">
+
+        <div id="investment-list"></div>
+
+    </div>
+
+
+    <div
+        class="card"
+        style="margin-top:18px"
+    >
+
+        <div class="section-title">
+            Simulador de retorno
+        </div>
+
+        <div
+            class="page-subtitle"
+            style="margin-bottom:17px"
+        >
+            Veja aproximadamente quanto tempo um investimento pode levar para se pagar.
+        </div>
+
+
+        <div class="form-grid">
+
+            <div class="form-group">
+
+                <label>
+                    Valor do investimento
+                </label>
+
+                <input
+                    class="input"
+                    id="sim-investment-value"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex.: 3000"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    % do lucro mensal destinado
+                </label>
+
+                <select
+                    class="input"
+                    id="sim-investment-percent"
+                >
+
+                    <option value="50">
+                        50% · Empresa
+                    </option>
+
+                    <option value="25">
+                        25%
+                    </option>
+
+                    <option value="75">
+                        75%
+                    </option>
+
+                    <option value="100">
+                        100%
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div
+            class="travel-result"
+            id="investment-simulation"
+        >
+            Preencha o valor para calcular.
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     PROGRAM
+========================= -->
+
+<section class="page" id="page-program">
+
+    <div class="page-head">
+
+        <div>
+
+            <div class="page-title">
+                Programação
+            </div>
+
+            <div class="page-subtitle">
+                Organize viagens e alimentação
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="program-tabs">
+
+        <button
+            class="program-tab active"
+            data-program-tab="travel"
+        >
+            Viagem
+        </button>
+
+        <button
+            class="program-tab"
+            data-program-tab="restaurants"
+        >
+            Restaurantes
+        </button>
+
+    </div>
+
+
+    <!-- VIAGEM -->
+
+    <div
+        class="program-section"
+        id="program-travel"
+    >
+
+        <div class="card">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Quilômetros
+                    </label>
+
+                    <input
+                        class="input"
+                        id="travel-km"
+                        type="number"
+                        min="0"
+                        step="1"
+                        placeholder="Ex.: 120"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Preço do combustível
+                    </label>
+
+                    <input
+                        class="input"
+                        id="travel-fuel-price"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="Ex.: 6,00"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Consumo do carro
+                    </label>
+
+                    <input
+                        class="input"
+                        id="travel-consumption"
+                        type="number"
+                        min="1"
+                        step="0.1"
+                        value="11"
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Evento relacionado
+                    </label>
+
+                    <select
+                        class="input"
+                        id="travel-event"
+                    >
+
+                        <option value="">
+                            Não vincular
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div style="margin-top:15px">
+
+                <label
+                    style="display:flex;align-items:center;gap:9px;color:#aaa;font-size:12px"
+                >
+
+                    <input
+                        type="checkbox"
+                        id="travel-roundtrip"
+                        checked
+                    >
+
+                    Ida e volta
+
+                </label>
+
+            </div>
+
+
+            <div
+                class="travel-result"
+                id="travel-result"
+            >
+                Informe os dados da viagem.
+            </div>
+
+
+            <div style="margin-top:14px">
+
+                <button
+                    class="btn btn-primary"
+                    id="calculate-travel"
+                >
+                    Calcular viagem
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- RESTAURANTES -->
+
+    <div
+        class="program-section"
+        id="program-restaurants"
+        style="display:none"
+    >
+
+        <div class="card">
+
+            <div class="section-title">
+                Restaurantes
+            </div>
+
+            <div
+                class="page-subtitle"
+                style="margin-bottom:15px"
+            >
+                Procure opções próximas ao evento.
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Cidade ou local
+                </label>
+
+                <input
+                    class="input"
+                    id="restaurant-location"
+                    placeholder="Ex.: Maringá PR"
+                >
+
+            </div>
+
+
+            <div style="margin-top:14px">
+
+                <button
+                    class="btn btn-primary"
+                    id="search-restaurants"
+                >
+                    Pesquisar restaurantes
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<nav class="bottom-nav">
+
+    <div class="nav-inner">
+
+        <button
+            class="nav-item active"
+            data-page="home"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <path d="m3 10 9-7 9 7"/>
+                <path d="M5 9v11h14V9"/>
+                <path d="M9 20v-6h6v6"/>
+            </svg>
+
+            <span>
+                Início
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="events"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="17" rx="2"/>
+                <path d="M8 2v4M16 2v4M3 9h18"/>
+            </svg>
+
+            <span>
+                Eventos
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="finance"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M3 10h18"/>
+                <circle cx="16" cy="14" r="1"/>
+            </svg>
+
+            <span>
+                Finanças
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="reports"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <path d="M4 19V5"/>
+                <path d="M4 19h17"/>
+                <path d="m7 15 4-5 3 3 5-7"/>
+            </svg>
+
+            <span>
+                Relatórios
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="investments"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <path d="M4 19V5"/>
+                <path d="M4 19h17"/>
+                <path d="M8 15v-3"/>
+                <path d="M12 15V8"/>
+                <path d="M16 15v-6"/>
+            </svg>
+
+            <span>
+                Invest.
+            </span>
+
+        </button>
+
+
+        <button
+            class="nav-item"
+            data-page="program"
+        >
+
+            <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                <path d="M8 3v4M16 3v4M3 10h18"/>
+                <path d="M8 14h3M8 17h5"/>
+            </svg>
+
+            <span>
+                Program.
+            </span>
+
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal"
+>
+
+    <div
+        class="modal-box"
+        id="modal-box"
+    >
+
+    </div>
+
+</div>
+
+
+<div
+    class="toast"
+    id="toast"
+>
+    Salvo!
+</div>
+
+
+<script>
+
+/* =========================================================
+   EF SCORE
+   SISTEMA PRINCIPAL
+========================================================= */
+
+
+/* =========================================================
+   DADOS
+========================================================= */
+
+let eventos = carregar("efscore_eventos");
+let investimentos = carregar("efscore_investimentos");
+let viagens = carregar("efscore_viagens");
+
+let eventoAtual = null;
+
+
+/* =========================================================
+   LOCAL STORAGE
+========================================================= */
+
+function carregar(chave){
+
+    try{
+
+        const dados = localStorage.getItem(chave);
+
+        if(!dados){
+            return [];
+        }
+
+        const convertido = JSON.parse(dados);
+
+        return Array.isArray(convertido)
+            ? convertido
+            : [];
+
+    }catch(erro){
+
+        console.error(
+            "Erro ao carregar:",
+            chave,
+            erro
+        );
+
+        return [];
+
+    }
+
+}
+
+
+function salvar(){
+
+    try{
+
+        localStorage.setItem(
+            "efscore_eventos",
+            JSON.stringify(eventos)
+        );
+
+        localStorage.setItem(
+            "efscore_investimentos",
+            JSON.stringify(investimentos)
+        );
+
+        localStorage.setItem(
+            "efscore_viagens",
+            JSON.stringify(viagens)
+        );
+
+    }catch(erro){
+
+        console.error(
+            "Erro ao salvar dados:",
+            erro
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   UTILITÁRIOS
+========================================================= */
+
+function dinheiro(valor){
+
+    const numero = Number(valor) || 0;
+
+    return numero.toLocaleString(
+        "pt-BR",
+        {
+            style:"currency",
+            currency:"BRL"
+        }
+    );
+
+}
+
+
+function numero(valor){
+
+    return Number(valor) || 0;
+
+}
+
+
+function dataHoje(){
+
+    const agora = new Date();
+
+    const ano = agora.getFullYear();
+
+    const mes = String(
+        agora.getMonth()+1
+    ).padStart(2,"0");
+
+    const dia = String(
+        agora.getDate()
+    ).padStart(2,"0");
+
+    return `${ano}-${mes}-${dia}`;
+
+}
+
+
+function dataBonita(data){
+
+    if(!data){
+        return "";
+    }
+
+    const partes = data.split("-");
+
+    if(partes.length !== 3){
+        return data;
+    }
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+}
+
+
+function lucroEvento(evento){
+
+    return numero(evento.ganhos)
+        - numero(evento.despesas);
+
+}
+
+
+function mostrarToast(texto){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent = texto;
+
+    toast.classList.add("show");
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },2200);
+
+}
+
+
+/* =========================================================
+   NAVEGAÇÃO
+========================================================= */
+
+function abrirPagina(pagina){
+
+    document
+        .querySelectorAll(".page")
+        .forEach(function(elemento){
+
+            elemento.classList.remove("active");
+
+        });
+
+
+    const destino =
+        document.getElementById(
+            "page-" + pagina
+        );
+
+
+    if(destino){
+
+        destino.classList.add("active");
+
+    }
+
+
+    document
+        .querySelectorAll(".nav-item")
+        .forEach(function(item){
+
+            item.classList.toggle(
+                "active",
+                item.dataset.page === pagina
+            );
+
+        });
+
+
+    const titulos = {
+
+        home:"Controle financeiro",
+        events:"Eventos",
+        finance:"Finanças",
+        reports:"Relatórios",
+        investments:"Investimentos",
+        program:"Programação"
+
+    };
+
+
+    document.getElementById(
+        "header-title"
+    ).textContent =
+        titulos[pagina] || "EF Score";
+
+}
+
+
+document
+    .querySelectorAll(".nav-item")
+    .forEach(function(item){
+
+        item.addEventListener(
+            "click",
+            function(){
+
+                abrirPagina(
+                    item.dataset.page
+                );
+
+            }
+        );
+
+    });
+
+
+document
+    .querySelectorAll(".quick")
+    .forEach(function(item){
+
+        item.addEventListener(
+            "click",
+            function(){
+
+                abrirPagina(
+                    item.dataset.page
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function abrirModal(conteudo){
+
+    const modal =
+        document.getElementById("modal");
+
+    const box =
+        document.getElementById("modal-box");
+
+    box.innerHTML = conteudo;
+
+    modal.classList.add("show");
+
+}
+
+
+function fecharModal(){
+
+    document
+        .getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+document
+    .getElementById("modal")
+    .addEventListener(
+        "click",
+        function(event){
+
+            if(event.target.id === "modal"){
+
+                fecharModal();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   NOVO EVENTO
+========================================================= */
+
+function novoEvento(){
+
+    abrirModal(`
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+                Novo evento
+            </div>
+
+            <button
+                class="close"
+                id="close-modal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-form">
+
+            <div class="form-group">
+
+                <label>
+                    Nome do evento
+                </label>
+
+                <input
+                    class="input"
+                    id="event-name"
+                    type="text"
+                    placeholder="Ex.: Paranavaí Cup"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Data
+                </label>
+
+                <input
+                    class="input"
+                    id="event-date"
+                    type="date"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Ganhos previstos
+                </label>
+
+                <input
+                    class="input"
+                    id="event-gain"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0,00"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Despesas iniciais
+                </label>
+
+                <input
+                    class="input"
+                    id="event-expense"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0,00"
+                >
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="btn"
+                    id="cancel-event"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    id="save-event"
+                >
+                    Criar evento
+                </button>
+
+            </div>
+
+        </div>
+
+    `);
+
+
+    document.getElementById(
+        "event-date"
+    ).value = dataHoje();
+
+
+    document
+        .getElementById("close-modal")
+        .addEventListener(
+            "click",
+            fecharModal
+        );
+
+
+    document
+        .getElementById("cancel-event")
+        .addEventListener(
+            "click",
+            fecharModal
+        );
+
+
+    document
+        .getElementById("save-event")
+        .addEventListener(
+            "click",
+            criarEvento
+        );
+
+
+    setTimeout(function(){
+
+        document
+            .getElementById("event-name")
+            .focus();
+
+    },50);
+
+}
+
+
+/* =========================================================
+   CRIAR EVENTO
+========================================================= */
+
+function criarEvento(){
+
+    const nome =
+        document
+            .getElementById("event-name")
+            .value
+            .trim();
+
+
+    const data =
+        document
+            .getElementById("event-date")
+            .value;
+
+
+    const ganhos =
+        numero(
+            document
+                .getElementById("event-gain")
+                .value
+        );
+
+
+    const despesas =
+        numero(
+            document
+                .getElementById("event-expense")
+                .value
+        );
+
+
+    if(!nome){
+
+        alert(
+            "Digite o nome do evento."
+        );
+
+        return;
+
+    }
+
+
+    if(!data){
+
+        alert(
+            "Escolha a data do evento."
+        );
+
+        return;
+
+    }
+
+
+    const evento = {
+
+        id:Date.now(),
+
+        nome:nome,
+
+        data:data,
+
+        ganhos:ganhos,
+
+        despesas:despesas,
+
+        ganhosItens:ganhos > 0
+            ? [
+                {
+                    id:Date.now()+1,
+                    descricao:"Ganho inicial",
+                    valor:ganhos
+                }
+            ]
+            : [],
+
+        despesasItens:despesas > 0
+            ? [
+                {
+                    id:Date.now()+2,
+                    descricao:"Despesa inicial",
+                    valor:despesas
+                }
+            ]
+            : []
+
+    };
+
+
+    eventos.push(evento);
+
+    salvar();
+
+    fecharModal();
+
+    renderizarTudo();
+
+    abrirPagina("events");
+
+    mostrarToast(
+        "Evento criado com sucesso!"
+    );
+
+}
+
+
+/* =========================================================
+   BOTÕES NOVO EVENTO
+========================================================= */
+
+document
+    .getElementById("home-new-event")
+    .addEventListener(
+        "click",
+        novoEvento
+    );
+
+
+document
+    .getElementById("events-new-event")
+    .addEventListener(
+        "click",
+        novoEvento
+    );
+
+
+/* =========================================================
+   LISTA DE EVENTOS
+========================================================= */
+
+function renderizarEventos(){
+
+    const lista =
+        document.getElementById(
+            "event-list"
+        );
+
+
+    if(eventos.length === 0){
+
+        lista.innerHTML = `
+
+            <div class="empty">
+
+                <div
+                    style="font-size:30px;margin-bottom:10px"
+                >
+                    +
+                </div>
+
+                <div
+                    style="color:white;font-weight:700"
+                >
+                    Nenhum evento criado
+                </div>
+
+                <div
+                    style="margin-top:5px"
+                >
+                    Clique no + para criar seu primeiro evento.
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    const ordenados =
+        [...eventos].sort(
+            function(a,b){
+
+                return (
+                    new Date(b.data)
+                    -
+                    new Date(a.data)
+                );
+
+            }
+        );
+
+
+    ordenados.forEach(
+        function(evento){
+
+            const lucro =
+                lucroEvento(evento);
+
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "event-card";
+
+
+            card.innerHTML = `
+
+                <div class="event-top">
+
+                    <div>
+
+                        <div class="event-name">
+                            ${escapar(evento.nome)}
+                        </div>
+
+                        <div class="event-date">
+                            ${dataBonita(evento.data)}
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="event-profit"
+                        style="color:${lucro >= 0 ? "#22c55e" : "#ef4444"}"
+                    >
+                        ${dinheiro(lucro)}
+                    </div>
+
+                </div>
+
+
+                <div class="event-bottom">
+
+                    <div class="event-mini">
+                        Ganhos:
+                        <strong style="color:#ddd">
+                            ${dinheiro(evento.ganhos)}
+                        </strong>
+                    </div>
+
+                    <div class="event-mini">
+                        Despesas:
+                        <strong style="color:#ddd">
+                            ${dinheiro(evento.despesas)}
+                        </strong>
+                    </div>
+
+                </div>
+
+            `;
+
+
+            card.addEventListener(
+                "click",
+                function(){
+
+                    abrirEvento(
+                        evento.id
+                    );
+
+                }
+            );
+
+
+            lista.appendChild(card);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ESCAPAR TEXTO
+========================================================= */
+
+function escapar(texto){
+
+    return String(texto)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+/* =========================================================
+   ABRIR EVENTO
+========================================================= */
+
+function abrirEvento(id){
+
+    const evento =
+        eventos.find(
+            function(item){
+
+                return item.id === id;
+
+            }
+        );
+
+
+    if(!evento){
+        return;
+    }
+
+
+    eventoAtual = evento;
+
+
+    document.getElementById(
+        "detail-event-name"
+    ).textContent =
+        evento.nome;
+
+
+    document.getElementById(
+        "detail-event-date"
+    ).textContent =
+        dataBonita(evento.data);
+
+
+    renderizarDetalhe();
+
+
+    abrirPagina(
+        "event-detail"
+    );
+
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(function(tab){
+
+            tab.classList.remove("active");
+
+        });
+
+
+    document
+        .querySelector(
+            '[data-detail-tab="gains"]'
+        )
+        .classList.add("active");
+
+
+    document
+        .querySelectorAll(".detail-section")
+        .forEach(function(section){
+
+            section.classList.remove(
+                "active"
+            );
+
+        });
+
+
+    document
+        .getElementById("detail-gains")
+        .classList.add("active");
+
+}
+
+
+/* =========================================================
+   TABS DO EVENTO
+========================================================= */
+
+document
+    .querySelectorAll(".tab")
+    .forEach(function(tab){
+
+        tab.addEventListener(
+            "click",
+            function(){
+
+                const alvo =
+                    tab.dataset.detailTab;
+
+
+                document
+                    .querySelectorAll(".tab")
+                    .forEach(function(item){
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                tab.classList.add("active");
+
+
+                document
+                    .querySelectorAll(
+                        ".detail-section"
+                    )
+                    .forEach(function(section){
+
+                        section.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                document
+                    .getElementById(
+                        "detail-" + alvo
+                    )
+                    .classList.add("active");
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   DETALHE DO EVENTO
+========================================================= */
+
+function renderizarDetalhe(){
+
+    if(!eventoAtual){
+        return;
+    }
+
+
+    if(!Array.isArray(
+        eventoAtual.ganhosItens
+    )){
+
+        eventoAtual.ganhosItens = [];
+
+    }
+
+
+    if(!Array.isArray(
+        eventoAtual.despesasItens
+    )){
+
+        eventoAtual.despesasItens = [];
+
+    }
+
+
+    eventoAtual.ganhos =
+        eventoAtual.ganhosItens.reduce(
+            function(total,item){
+
+                return total + numero(item.valor);
+
+            },
+            0
+        );
+
+
+    eventoAtual.despesas =
+        eventoAtual.despesasItens.reduce(
+            function(total,item){
+
+                return total + numero(item.valor);
+
+            },
+            0
+        );
+
+
+    renderizarListaGanhos();
+
+    renderizarListaDespesas();
+
+    renderizarResultado();
+
+    salvar();
+
+    renderizarTudo();
+
+}
+
+
+/* =========================================================
+   GANHOS
+========================================================= */
+
+function renderizarListaGanhos(){
+
+    const lista =
+        document.getElementById(
+            "gain-list"
+        );
+
+
+    if(eventoAtual.ganhosItens.length === 0){
+
+        lista.innerHTML = `
+
+            <div class="empty">
+                Nenhum ganho registrado.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    eventoAtual.ganhosItens.forEach(
+        function(item){
+
+            const linha =
+                document.createElement("div");
+
+
+            linha.className =
+                "money-row";
+
+
+            linha.innerHTML = `
+
+                <div>
+
+                    <div class="money-name">
+                        ${escapar(item.descricao)}
+                    </div>
+
+                    <div class="money-description">
+                        Ganho
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="display:flex;align-items:center;gap:12px"
+                >
+
+                    <div class="money-value green">
+                        ${dinheiro(item.valor)}
+                    </div>
+
+                    <button
+                        class="btn btn-danger"
+                        style="padding:6px 9px"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            `;
+
+
+            linha
+                .querySelector("button")
+                .addEventListener(
+                    "click",
+                    function(event){
+
+                        event.stopPropagation();
+
+                        eventoAtual.ganhosItens =
+                            eventoAtual.ganhosItens.filter(
+                                function(ganho){
+
+                                    return ganho.id !== item.id;
+
+                                }
+                            );
+
+
+                        renderizarDetalhe();
+
+                        mostrarToast(
+                            "Ganho removido."
+                        );
+
+                    }
+                );
+
+
+            lista.appendChild(linha);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ADICIONAR GANHO
+========================================================= */
+
+document
+    .getElementById("add-gain")
+    .addEventListener(
+        "click",
+        function(){
+
+            if(!eventoAtual){
+                return;
+            }
+
+
+            abrirModal(`
+
+                <div class="modal-head">
+
+                    <div class="modal-title">
+                        Adicionar ganho
+                    </div>
+
+                    <button
+                        class="close"
+                        id="close-modal"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="modal-form">
+
+                    <div class="form-group">
+
+                        <label>
+                            Descrição
+                        </label>
+
+                        <input
+                            class="input"
+                            id="money-description"
+                            placeholder="Ex.: Venda de fotos"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor
+                        </label>
+
+                        <input
+                            class="input"
+                            id="money-value"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+
+                    <div class="modal-actions">
+
+                        <button
+                            class="btn"
+                            id="cancel-money"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="save-money"
+                        >
+                            Adicionar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `);
+
+
+            document
+                .getElementById("close-modal")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("cancel-money")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("save-money")
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        const descricao =
+                            document
+                                .getElementById(
+                                    "money-description"
+                                )
+                                .value
+                                .trim();
+
+
+                        const valor =
+                            numero(
+                                document
+                                    .getElementById(
+                                        "money-value"
+                                    )
+                                    .value
+                            );
+
+
+                        if(!descricao){
+
+                            alert(
+                                "Digite uma descrição."
+                            );
+
+                            return;
+
+                        }
+
+
+                        if(valor <= 0){
+
+                            alert(
+                                "Digite um valor maior que zero."
+                            );
+
+                            return;
+
+                        }
+
+
+                        eventoAtual.ganhosItens.push({
+
+                            id:Date.now(),
+
+                            descricao:descricao,
+
+                            valor:valor
+
+                        });
+
+
+                        renderizarDetalhe();
+
+                        fecharModal();
+
+                        mostrarToast(
+                            "Ganho adicionado!"
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+
+/* =========================================================
+   DESPESAS
+========================================================= */
+
+function renderizarListaDespesas(){
+
+    const lista =
+        document.getElementById(
+            "expense-list"
+        );
+
+
+    if(eventoAtual.despesasItens.length === 0){
+
+        lista.innerHTML = `
+
+            <div class="empty">
+                Nenhuma despesa registrada.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    eventoAtual.despesasItens.forEach(
+        function(item){
+
+            const linha =
+                document.createElement("div");
+
+
+            linha.className =
+                "money-row";
+
+
+            linha.innerHTML = `
+
+                <div>
+
+                    <div class="money-name">
+                        ${escapar(item.descricao)}
+                    </div>
+
+                    <div class="money-description">
+                        Despesa
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="display:flex;align-items:center;gap:12px"
+                >
+
+                    <div class="money-value red">
+                        ${dinheiro(item.valor)}
+                    </div>
+
+                    <button
+                        class="btn btn-danger"
+                        style="padding:6px 9px"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+            `;
+
+
+            linha
+                .querySelector("button")
+                .addEventListener(
+                    "click",
+                    function(event){
+
+                        event.stopPropagation();
+
+                        eventoAtual.despesasItens =
+                            eventoAtual.despesasItens.filter(
+                                function(despesa){
+
+                                    return despesa.id !== item.id;
+
+                                }
+                            );
+
+
+                        renderizarDetalhe();
+
+                        mostrarToast(
+                            "Despesa removida."
+                        );
+
+                    }
+                );
+
+
+            lista.appendChild(linha);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ADICIONAR DESPESA
+========================================================= */
+
+document
+    .getElementById("add-expense")
+    .addEventListener(
+        "click",
+        function(){
+
+            if(!eventoAtual){
+                return;
+            }
+
+
+            abrirModal(`
+
+                <div class="modal-head">
+
+                    <div class="modal-title">
+                        Adicionar despesa
+                    </div>
+
+                    <button
+                        class="close"
+                        id="close-modal"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="modal-form">
+
+                    <div class="form-group">
+
+                        <label>
+                            Descrição
+                        </label>
+
+                        <input
+                            class="input"
+                            id="money-description"
+                            placeholder="Ex.: Combustível"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Valor
+                        </label>
+
+                        <input
+                            class="input"
+                            id="money-value"
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            placeholder="0,00"
+                        >
+
+                    </div>
+
+
+                    <div class="modal-actions">
+
+                        <button
+                            class="btn"
+                            id="cancel-money"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="save-money"
+                        >
+                            Adicionar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `);
+
+
+            document
+                .getElementById("close-modal")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("cancel-money")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("save-money")
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        const descricao =
+                            document
+                                .getElementById(
+                                    "money-description"
+                                )
+                                .value
+                                .trim();
+
+
+                        const valor =
+                            numero(
+                                document
+                                    .getElementById(
+                                        "money-value"
+                                    )
+                                    .value
+                            );
+
+
+                        if(!descricao){
+
+                            alert(
+                                "Digite uma descrição."
+                            );
+
+                            return;
+
+                        }
+
+
+                        if(valor <= 0){
+
+                            alert(
+                                "Digite um valor maior que zero."
+                            );
+
+                            return;
+
+                        }
+
+
+                        eventoAtual.despesasItens.push({
+
+                            id:Date.now(),
+
+                            descricao:descricao,
+
+                            valor:valor
+
+                        });
+
+
+                        renderizarDetalhe();
+
+                        fecharModal();
+
+                        mostrarToast(
+                            "Despesa adicionada!"
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+
+/* =========================================================
+   RESULTADO
+========================================================= */
+
+function renderizarResultado(){
+
+    const lucro =
+        lucroEvento(eventoAtual);
+
+
+    document.getElementById(
+        "detail-profit"
+    ).textContent =
+        dinheiro(lucro);
+
+
+    document.getElementById(
+        "detail-profit"
+    ).style.color =
+        lucro >= 0
+            ? "white"
+            : "#ef4444";
+
+
+    const empresa =
+        lucro > 0
+            ? lucro * .50
+            : 0;
+
+
+    const mateus =
+        lucro > 0
+            ? lucro * .25
+            : 0;
+
+
+    const felipe =
+        lucro > 0
+            ? lucro * .25
+            : 0;
+
+
+    document.getElementById(
+        "split-company"
+    ).textContent =
+        dinheiro(empresa);
+
+
+    document.getElementById(
+        "split-mateus"
+    ).textContent =
+        dinheiro(mateus);
+
+
+    document.getElementById(
+        "split-felipe"
+    ).textContent =
+        dinheiro(felipe);
+
+}
+
+
+/* =========================================================
+   VOLTAR
+========================================================= */
+
+document
+    .getElementById("back-events")
+    .addEventListener(
+        "click",
+        function(){
+
+            eventoAtual = null;
+
+            abrirPagina("events");
+
+        }
+    );
+
+
+/* =========================================================
+   EDITAR EVENTO
+========================================================= */
+
+document
+    .getElementById("edit-event")
+    .addEventListener(
+        "click",
+        function(){
+
+            if(!eventoAtual){
+                return;
+            }
+
+
+            abrirModal(`
+
+                <div class="modal-head">
+
+                    <div class="modal-title">
+                        Editar evento
+                    </div>
+
+                    <button
+                        class="close"
+                        id="close-modal"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="modal-form">
+
+                    <div class="form-group">
+
+                        <label>
+                            Nome
+                        </label>
+
+                        <input
+                            class="input"
+                            id="edit-name"
+                            value="${escapar(eventoAtual.nome)}"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Data
+                        </label>
+
+                        <input
+                            class="input"
+                            id="edit-date"
+                            type="date"
+                            value="${eventoAtual.data}"
+                        >
+
+                    </div>
+
+
+                    <div class="modal-actions">
+
+                        <button
+                            class="btn"
+                            id="cancel-edit"
+                        >
+                            Cancelar
+                        </button>
+
+                        <button
+                            class="btn btn-primary"
+                            id="save-edit"
+                        >
+                            Salvar
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `);
+
+
+            document
+                .getElementById("close-modal")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("cancel-edit")
+                .addEventListener(
+                    "click",
+                    fecharModal
+                );
+
+
+            document
+                .getElementById("save-edit")
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        const nome =
+                            document
+                                .getElementById(
+                                    "edit-name"
+                                )
+                                .value
+                                .trim();
+
+
+                        const data =
+                            document
+                                .getElementById(
+                                    "edit-date"
+                                )
+                                .value;
+
+
+                        if(!nome || !data){
+
+                            alert(
+                                "Preencha os campos."
+                            );
+
+                            return;
+
+                        }
+
+
+                        eventoAtual.nome =
+                            nome;
+
+
+                        eventoAtual.data =
+                            data;
+
+
+                        document.getElementById(
+                            "detail-event-name"
+                        ).textContent =
+                            nome;
+
+
+                        document.getElementById(
+                            "detail-event-date"
+                        ).textContent =
+                            dataBonita(data);
+
+
+                        salvar();
+
+                        renderizarTudo();
+
+                        fecharModal();
+
+                        mostrarToast(
+                            "Evento atualizado!"
+                        );
+
+                    }
+                );
+
+        }
+    );
+
+
+/* =========================================================
+   EXCLUIR EVENTO
+========================================================= */
+
+document
+    .getElementById("delete-event")
+    .addEventListener(
+        "click",
+        function(){
+
+            if(!eventoAtual){
+                return;
+            }
+
+
+            const confirmar =
+                confirm(
+                    `Excluir o evento "${eventoAtual.nome}"?`
+                );
+
+
+            if(!confirmar){
+                return;
+            }
+
+
+            eventos =
+                eventos.filter(
+                    function(evento){
+
+                        return evento.id !== eventoAtual.id;
+
+                    }
+                );
+
+
+            salvar();
+
+            eventoAtual = null;
+
+            renderizarTudo();
+
+            abrirPagina("events");
+
+            mostrarToast(
+                "Evento excluído."
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   FINANÇAS
+========================================================= */
+
+function totais(){
+
+    let ganhos = 0;
+
+    let despesas = 0;
+
+
+    eventos.forEach(
+        function(evento){
+
+            ganhos += numero(evento.ganhos);
+
+            despesas += numero(evento.despesas);
+
+        }
+    );
+
+
+    return {
+
+        ganhos:ganhos,
+
+        despesas:despesas,
+
+        lucro:ganhos-despesas
+
+    };
+
+}
+
+
+function renderizarFinancas(){
+
+    const t =
+        totais();
+
+
+    document.getElementById(
+        "finance-gains"
+    ).textContent =
+        dinheiro(t.ganhos);
+
+
+    document.getElementById(
+        "finance-expenses"
+    ).textContent =
+        dinheiro(t.despesas);
+
+
+    document.getElementById(
+        "finance-profit"
+    ).textContent =
+        dinheiro(t.lucro);
+
+
+    const investido =
+        investimentos.reduce(
+            function(total,item){
+
+                return total + numero(item.valor);
+
+            },
+            0
+        );
+
+
+    document.getElementById(
+        "finance-investments"
+    ).textContent =
+        dinheiro(investido);
+
+
+    const lista =
+        document.getElementById(
+            "finance-events"
+        );
+
+
+    if(eventos.length === 0){
+
+        lista.innerHTML =
+            `<div class="empty">Nenhum evento.</div>`;
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    eventos.forEach(
+        function(evento){
+
+            const lucro =
+                lucroEvento(evento);
+
+
+            const linha =
+                document.createElement("div");
+
+
+            linha.className =
+                "finance-item";
+
+
+            linha.innerHTML = `
+
+                <div class="finance-left">
+
+                    <div class="finance-title">
+                        ${escapar(evento.nome)}
+                    </div>
+
+                    <div class="finance-sub">
+                        ${dataBonita(evento.data)}
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="finance-number"
+                    style="color:${lucro >= 0 ? "#22c55e" : "#ef4444"}"
+                >
+                    ${dinheiro(lucro)}
+                </div>
+
+            `;
+
+
+            lista.appendChild(linha);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RELATÓRIOS
+========================================================= */
+
+function renderizarRelatorios(){
+
+    const t =
+        totais();
+
+
+    const margem =
+        t.ganhos > 0
+            ? (t.lucro / t.ganhos) * 100
+            : 0;
+
+
+    document.getElementById(
+        "report-gains"
+    ).textContent =
+        dinheiro(t.ganhos);
+
+
+    document.getElementById(
+        "report-expenses"
+    ).textContent =
+        dinheiro(t.despesas);
+
+
+    document.getElementById(
+        "report-profit"
+    ).textContent =
+        dinheiro(t.lucro);
+
+
+    document.getElementById(
+        "report-margin"
+    ).textContent =
+        margem.toFixed(1) + "%";
+
+
+    const empresa =
+        t.lucro > 0
+            ? t.lucro * .50
+            : 0;
+
+
+    const mateus =
+        t.lucro > 0
+            ? t.lucro * .25
+            : 0;
+
+
+    const felipe =
+        t.lucro > 0
+            ? t.lucro * .25
+            : 0;
+
+
+    document.getElementById(
+        "report-company"
+    ).textContent =
+        dinheiro(empresa);
+
+
+    document.getElementById(
+        "report-mateus"
+    ).textContent =
+        dinheiro(mateus);
+
+
+    document.getElementById(
+        "report-felipe"
+    ).textContent =
+        dinheiro(felipe);
+
+}
+
+
+/* =========================================================
+   INVESTIMENTOS
+========================================================= */
+
+function novoInvestimento(){
+
+    abrirModal(`
+
+        <div class="modal-head">
+
+            <div class="modal-title">
+                Novo investimento
+            </div>
+
+            <button
+                class="close"
+                id="close-modal"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-form">
+
+            <div class="form-group">
+
+                <label>
+                    O que você quer comprar?
+                </label>
+
+                <input
+                    class="input"
+                    id="investment-name"
+                    placeholder="Ex.: Lente 70-200"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Valor
+                </label>
+
+                <input
+                    class="input"
+                    id="investment-value"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0,00"
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Data planejada
+                </label>
+
+                <input
+                    class="input"
+                    id="investment-date"
+                    type="date"
+                >
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="btn"
+                    id="cancel-investment"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="btn btn-primary"
+                    id="save-investment"
+                >
+                    Salvar
+                </button>
+
+            </div>
+
+        </div>
+
+    `);
+
+
+    document.getElementById(
+        "investment-date"
+    ).value = dataHoje();
+
+
+    document
+        .getElementById("close-modal")
+        .addEventListener(
+            "click",
+            fecharModal
+        );
+
+
+    document
+        .getElementById("cancel-investment")
+        .addEventListener(
+            "click",
+            fecharModal
+        );
+
+
+    document
+        .getElementById("save-investment")
+        .addEventListener(
+            "click",
+            function(){
+
+                const nome =
+                    document
+                        .getElementById(
+                            "investment-name"
+                        )
+                        .value
+                        .trim();
+
+
+                const valor =
+                    numero(
+                        document
+                            .getElementById(
+                                "investment-value"
+                            )
+                            .value
+                    );
+
+
+                const data =
+                    document
+                        .getElementById(
+                            "investment-date"
+                        )
+                        .value;
+
+
+                if(!nome){
+
+                    alert(
+                        "Digite o nome do investimento."
+                    );
+
+                    return;
+
+                }
+
+
+                if(valor <= 0){
+
+                    alert(
+                        "Digite um valor válido."
+                    );
+
+                    return;
+
+                }
+
+
+                investimentos.push({
+
+                    id:Date.now(),
+
+                    nome:nome,
+
+                    valor:valor,
+
+                    data:data,
+
+                    comprado:false
+
+                });
+
+
+                salvar();
+
+                renderizarTudo();
+
+                fecharModal();
+
+                mostrarToast(
+                    "Investimento criado!"
+                );
+
+            }
+        );
+
+}
+
+
+document
+    .getElementById("new-investment")
+    .addEventListener(
+        "click",
+        novoInvestimento
+    );
+
+
+/* =========================================================
+   LISTA INVESTIMENTOS
+========================================================= */
+
+function renderizarInvestimentos(){
+
+    const lista =
+        document.getElementById(
+            "investment-list"
+        );
+
+
+    const total =
+        investimentos.reduce(
+            function(t,item){
+
+                return t + numero(item.valor);
+
+            },
+            0
+        );
+
+
+    document.getElementById(
+        "investment-total"
+    ).textContent =
+        dinheiro(total);
+
+
+    document.getElementById(
+        "investment-count"
+    ).textContent =
+        investimentos.length;
+
+
+    if(investimentos.length === 0){
+
+        lista.innerHTML = `
+
+            <div class="empty">
+
+                Nenhum investimento planejado.
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    lista.innerHTML = "";
+
+
+    investimentos.forEach(
+        function(item){
+
+            const card =
+                document.createElement("div");
+
+
+            card.className =
+                "card investment-card";
+
+
+            const t =
+                totais();
+
+
+            const lucroMensal =
+                t.lucro > 0
+                    ? t.lucro
+                    : 0;
+
+
+            const percentual =
+                lucroMensal > 0
+                    ? Math.min(
+                        100,
+                        (lucroMensal * .5 / item.valor) * 100
+                    )
+                    : 0;
+
+
+            card.innerHTML = `
+
+                <div class="investment-top">
+
+                    <div>
+
+                        <div class="investment-name">
+                            ${escapar(item.nome)}
+                        </div>
+
+                        <div
+                            style="font-size:11px;color:#777;margin-top:4px"
+                        >
+                            ${dataBonita(item.data)}
+                        </div>
+
+                    </div>
+
+
+                    <div class="investment-status">
+                        ${item.comprado ? "Comprado" : "Planejado"}
+                    </div>
+
+                </div>
+
+
+                <div class="investment-value">
+                    ${dinheiro(item.valor)}
+                </div>
+
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width:${percentual}%"
+                    ></div>
+
+                </div>
+
+
+                <div class="investment-info">
+
+                    <span>
+                        Simulação com 50% do lucro
+                    </span>
+
+                    <span>
+                        ${percentual.toFixed(0)}%
+                    </span>
+
+                </div>
+
+
+                <div
+                    style="display:flex;gap:8px;margin-top:14px"
+                >
+
+                    <button
+                        class="btn"
+                        data-action="toggle"
+                    >
+                        ${item.comprado
+                            ? "Marcar planejado"
+                            : "Marcar comprado"}
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        data-action="delete"
+                    >
+                        Excluir
+                    </button>
+
+                </div>
+
+            `;
+
+
+            card
+                .querySelector(
+                    '[data-action="toggle"]'
+                )
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        item.comprado =
+                            !item.comprado;
+
+                        salvar();
+
+                        renderizarTudo();
+
+                    }
+                );
+
+
+            card
+                .querySelector(
+                    '[data-action="delete"]'
+                )
+                .addEventListener(
+                    "click",
+                    function(){
+
+                        investimentos =
+                            investimentos.filter(
+                                function(inv){
+
+                                    return inv.id !== item.id;
+
+                                }
+                            );
+
+
+                        salvar();
+
+                        renderizarTudo();
+
+                        mostrarToast(
+                            "Investimento excluído."
+                        );
+
+                    }
+                );
+
+
+            lista.appendChild(card);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SIMULADOR INVESTIMENTO
+========================================================= */
+
+function calcularSimulacao(){
+
+    const valor =
+        numero(
+            document
+                .getElementById(
+                    "sim-investment-value"
+                )
+                .value
+        );
+
+
+    const percentual =
+        numero(
+            document
+                .getElementById(
+                    "sim-investment-percent"
+                )
+                .value
+        );
+
+
+    const resultado =
+        document.getElementById(
+            "investment-simulation"
+        );
+
+
+    if(valor <= 0){
+
+        resultado.innerHTML =
+            "Preencha o valor do investimento.";
+
+        return;
+
+    }
+
+
+    const t =
+        totais();
+
+
+    const lucroMensal =
+        t.lucro;
+
+
+    if(lucroMensal <= 0){
+
+        resultado.innerHTML = `
+
+            <div>
+                Ainda não há lucro positivo suficiente
+                para calcular o prazo.
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    const mensal =
+        lucroMensal *
+        (percentual / 100);
+
+
+    const meses =
+        valor / mensal;
+
+
+    const anos =
+        meses / 12;
+
+
+    resultado.innerHTML = `
+
+        <div style="color:#aaa;font-size:12px">
+            Destinando ${percentual}% do lucro mensal
+        </div>
+
+        <div class="travel-total">
+            ${meses.toFixed(1)} meses
+        </div>
+
+        <div style="color:#aaa;font-size:12px;margin-top:5px">
+            Aproximadamente
+            ${anos.toFixed(1)}
+            ano(s)
+            ·
+            ${dinheiro(mensal)}/mês
+        </div>
+
+    `;
+
+}
+
+
+document
+    .getElementById(
+        "sim-investment-value"
+    )
+    .addEventListener(
+        "input",
+        calcularSimulacao
+    );
+
+
+document
+    .getElementById(
+        "sim-investment-percent"
+    )
+    .addEventListener(
+        "change",
+        calcularSimulacao
+    );
+
+
+/* =========================================================
+   PROGRAMAÇÃO
+========================================================= */
+
+document
+    .querySelectorAll(".program-tab")
+    .forEach(function(tab){
+
+        tab.addEventListener(
+            "click",
+            function(){
+
+                document
+                    .querySelectorAll(
+                        ".program-tab"
+                    )
+                    .forEach(function(item){
+
+                        item.classList.remove(
+                            "active"
+                        );
+
+                    });
+
+
+                tab.classList.add("active");
+
+
+                document
+                    .querySelectorAll(
+                        ".program-section"
+                    )
+                    .forEach(function(section){
+
+                        section.style.display =
+                            "none";
+
+                    });
+
+
+                document
+                    .getElementById(
+                        "program-" +
+                        tab.dataset.programTab
+                    )
+                    .style.display =
+                        "block";
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   ATUALIZAR SELECT DE VIAGEM
+========================================================= */
+
+function atualizarEventosViagem(){
+
+    const select =
+        document.getElementById(
+            "travel-event"
+        );
+
+
+    select.innerHTML = `
+
+        <option value="">
+            Não vincular
+        </option>
+
+    `;
+
+
+    eventos.forEach(
+        function(evento){
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+
+            option.value =
+                evento.id;
+
+
+            option.textContent =
+                evento.nome;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CALCULAR VIAGEM
+========================================================= */
+
+document
+    .getElementById(
+        "calculate-travel"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            const km =
+                numero(
+                    document
+                        .getElementById(
+                            "travel-km"
+                        )
+                        .value
+                );
+
+
+            const preco =
+                numero(
+                    document
+                        .getElementById(
+                            "travel-fuel-price"
+                        )
+                        .value
+                );
+
+
+            const consumo =
+                numero(
+                    document
+                        .getElementById(
+                            "travel-consumption"
+                        )
+                        .value
+                );
+
+
+            const idaVolta =
+                document
+                    .getElementById(
+                        "travel-roundtrip"
+                    )
+                    .checked;
+
+
+            const eventoId =
+                document
+                    .getElementById(
+                        "travel-event"
+                    )
+                    .value;
+
+
+            const resultado =
+                document.getElementById(
+                    "travel-result"
+                );
+
+
+            if(km <= 0){
+
+                resultado.textContent =
+                    "Informe os quilômetros.";
+
+                return;
+
+            }
+
+
+            if(preco <= 0){
+
+                resultado.textContent =
+                    "Informe o preço do combustível.";
+
+                return;
+
+            }
+
+
+            if(consumo <= 0){
+
+                resultado.textContent =
+                    "Informe o consumo do carro.";
+
+                return;
+
+            }
+
+
+            const distancia =
+                idaVolta
+                    ? km * 2
+                    : km;
+
+
+            const litros =
+                distancia / consumo;
+
+
+            const custo =
+                litros * preco;
+
+
+            resultado.innerHTML = `
+
+                <div
+                    style="color:#aaa;font-size:12px"
+                >
+                    Distância total
+                </div>
+
+                <div class="travel-total">
+                    ${distancia.toFixed(1)} km
+                </div>
+
+                <div
+                    style="margin-top:12px;color:#aaa;font-size:12px"
+                >
+                    Combustível:
+                    ${litros.toFixed(2)} L
+                </div>
+
+                <div
+                    style="margin-top:4px;color:#aaa;font-size:12px"
+                >
+                    Custo estimado:
+                    <strong style="color:white">
+                        ${dinheiro(custo)}
+                    </strong>
+                </div>
+
+            `;
+
+
+            viagens.push({
+
+                id:Date.now(),
+
+                km:km,
+
+                distancia:distancia,
+
+                litros:litros,
+
+                custo:custo,
+
+                eventoId:eventoId
+                    ? Number(eventoId)
+                    : null,
+
+                data:dataHoje()
+
+            });
+
+
+            if(eventoId){
+
+                const evento =
+                    eventos.find(
+                        function(item){
+
+                            return item.id ===
+                                Number(eventoId);
+
+                        }
+                    );
+
+
+                if(evento){
+
+                    if(!Array.isArray(
+                        evento.despesasItens
+                    )){
+
+                        evento.despesasItens = [];
+
+                    }
+
+
+                    evento.despesasItens.push({
+
+                        id:Date.now()+1,
+
+                        descricao:
+                            "Combustível da viagem",
+
+                        valor:custo
+
+                    });
+
+
+                    evento.despesas =
+                        evento.despesasItens.reduce(
+                            function(total,item){
+
+                                return total +
+                                    numero(item.valor);
+
+                            },
+                            0
+                        );
+
+                }
+
+            }
+
+
+            salvar();
+
+            renderizarTudo();
+
+            mostrarToast(
+                eventoId
+                    ? "Viagem adicionada ao evento!"
+                    : "Viagem calculada!"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   RESTAURANTES
+========================================================= */
+
+document
+    .getElementById(
+        "search-restaurants"
+    )
+    .addEventListener(
+        "click",
+        function(){
+
+            const local =
+                document
+                    .getElementById(
+                        "restaurant-location"
+                    )
+                    .value
+                    .trim();
+
+
+            if(!local){
+
+                alert(
+                    "Digite uma cidade ou local."
+                );
+
+                return;
+
+            }
+
+
+            const busca =
+                encodeURIComponent(
+                    "restaurantes em " +
+                    local
+                );
+
+
+            window.open(
+                "https://www.google.com/search?q=" +
+                busca,
+                "_blank"
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   HOME
+========================================================= */
+
+function renderizarHome(){
+
+    const t =
+        totais();
+
+
+    document.getElementById(
+        "home-gains"
+    ).textContent =
+        dinheiro(t.ganhos);
+
+
+    document.getElementById(
+        "home-expenses"
+    ).textContent =
+        dinheiro(t.despesas);
+
+
+    document.getElementById(
+        "home-profit"
+    ).textContent =
+        dinheiro(t.lucro);
+
+
+    document.getElementById(
+        "home-events"
+    ).textContent =
+        eventos.length;
+
+}
+
+
+/* =========================================================
+   NORMALIZAR DADOS ANTIGOS
+========================================================= */
+
+function normalizarDados(){
+
+    eventos =
+        eventos.map(
+            function(evento){
+
+                if(!Array.isArray(
+                    evento.ganhosItens
+                )){
+
+                    evento.ganhosItens =
+                        numero(evento.ganhos) > 0
+                            ? [
+                                {
+                                    id:Date.now()+Math.random(),
+                                    descricao:"Ganho inicial",
+                                    valor:numero(evento.ganhos)
+                                }
+                            ]
+                            : [];
+
+                }
+
+
+                if(!Array.isArray(
+                    evento.despesasItens
+                )){
+
+                    evento.despesasItens =
+                        numero(evento.despesas) > 0
+                            ? [
+                                {
+                                    id:Date.now()+Math.random(),
+                                    descricao:"Despesa inicial",
+                                    valor:numero(evento.despesas)
+                                }
+                            ]
+                            : [];
+
+                }
+
+
+                evento.ganhos =
+                    evento.ganhosItens.reduce(
+                        function(total,item){
+
+                            return total +
+                                numero(item.valor);
+
+                        },
+                        0
+                    );
+
+
+                evento.despesas =
+                    evento.despesasItens.reduce(
+                        function(total,item){
+
+                            return total +
+                                numero(item.valor);
+
+                        },
+                        0
+                    );
+
+
+                return evento;
+
+            }
+        );
+
+
+    salvar();
+
+}
+
+
+/* =========================================================
+   RENDERIZAÇÃO GERAL
+========================================================= */
+
+function renderizarTudo(){
+
+    renderizarHome();
+
+    renderizarEventos();
+
+    renderizarFinancas();
+
+    renderizarRelatorios();
+
+    renderizarInvestimentos();
+
+    atualizarEventosViagem();
+
+
+    if(eventoAtual){
+
+        renderizarResultado();
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+normalizarDados();
+
+renderizarTudo();
+
+
+console.log(
+    "EF Score iniciado corretamente."
+);
+
+console.log(
+    "Eventos:",
+    eventos
+);
+/* =========================
+   INICIALIZAÇÃO
+========================= */
+
+window.addEventListener("load", function(){
+
+    setTimeout(function(){
+
+        const splash = document.getElementById("splash-screen");
+
+        if(splash){
+            splash.classList.add("hide");
+        }
+
+    }, 1500);
+
+});
+</script>
+
+</body>
+</html>
