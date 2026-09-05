@@ -1175,6 +1175,49 @@ svg{
 </head>
 
 <body>
+    <!-- =========================
+     LOGIN EF SCORE
+========================= -->
+
+<div id="auth-screen">
+
+    <div class="auth-box">
+
+        <img src="logo.png" alt="EF Score" class="auth-logo">
+
+        <h1>EF Score</h1>
+
+        <p class="auth-subtitle">
+            Entre na sua conta
+        </p>
+
+        <input
+            type="email"
+            id="auth-email"
+            placeholder="Seu e-mail"
+            autocomplete="email"
+        >
+
+        <input
+            type="password"
+            id="auth-password"
+            placeholder="Sua senha"
+            autocomplete="current-password"
+        >
+
+        <button id="auth-login">
+            ENTRAR
+        </button>
+
+        <button id="auth-register" class="auth-secondary">
+            CRIAR CONTA
+        </button>
+
+        <div id="auth-message"></div>
+
+    </div>
+
+</div>
 <div id="splash-screen">
 
     <div class="splash-content">
@@ -5671,48 +5714,154 @@ window.addEventListener("load", function(){
         });
     }
 </script>
-</body>
-    <!-- =========================
-     LOGIN EF SCORE
+<!-- =========================
+     AUTENTICAÇÃO EF SCORE
 ========================= -->
 
-<div id="auth-screen">
+<script>
 
-    <div class="auth-box">
+document.addEventListener("DOMContentLoaded", async function(){
 
-        <img src="logo.png" alt="EF Score" class="auth-logo">
+    const authScreen = document.getElementById("auth-screen");
+    const emailInput = document.getElementById("auth-email");
+    const passwordInput = document.getElementById("auth-password");
+    const loginButton = document.getElementById("auth-login");
+    const registerButton = document.getElementById("auth-register");
+    const message = document.getElementById("auth-message");
 
-        <h1>EF Score</h1>
+    if(
+        !authScreen ||
+        !emailInput ||
+        !passwordInput ||
+        !loginButton ||
+        !registerButton ||
+        !message
+    ){
+        return;
+    }
 
-        <p class="auth-subtitle">
-            Entre na sua conta
-        </p>
+    function showMessage(text){
+        message.textContent = text;
+    }
 
-        <input
-            type="email"
-            id="auth-email"
-            placeholder="Seu e-mail"
-            autocomplete="email"
-        >
+    function showApp(){
+        authScreen.style.display = "none";
+    }
 
-        <input
-            type="password"
-            id="auth-password"
-            placeholder="Sua senha"
-            autocomplete="current-password"
-        >
+    function showLogin(){
+        authScreen.style.display = "flex";
+    }
 
-        <button id="auth-login">
-            ENTRAR
-        </button>
+    // Verificar se já existe uma sessão
+    const { data: { session } } = await supabaseClient.auth.getSession();
 
-        <button id="auth-register" class="auth-secondary">
-            CRIAR CONTA
-        </button>
+    if(session){
+        showApp();
+    }else{
+        showLogin();
+    }
 
-        <div id="auth-message"></div>
 
-    </div>
+    // =========================
+    // ENTRAR
+    // =========================
 
-</div>
+    loginButton.addEventListener("click", async function(){
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if(!email || !password){
+            showMessage("Preencha o e-mail e a senha.");
+            return;
+        }
+
+        loginButton.disabled = true;
+        showMessage("Entrando...");
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        loginButton.disabled = false;
+
+        if(error){
+            showMessage("E-mail ou senha incorretos.");
+            console.error(error);
+            return;
+        }
+
+        if(data.session){
+            showMessage("");
+            showApp();
+        }
+
+    });
+
+
+    // =========================
+    // CRIAR CONTA
+    // =========================
+
+    registerButton.addEventListener("click", async function(){
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if(!email || !password){
+            showMessage("Preencha o e-mail e a senha.");
+            return;
+        }
+
+        if(password.length < 6){
+            showMessage("A senha precisa ter pelo menos 6 caracteres.");
+            return;
+        }
+
+        registerButton.disabled = true;
+        showMessage("Criando conta...");
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password
+        });
+
+        registerButton.disabled = false;
+
+        if(error){
+            showMessage("Não foi possível criar a conta.");
+            console.error(error);
+            return;
+        }
+
+        if(data.session){
+            showMessage("");
+            showApp();
+        }else{
+            showMessage("Conta criada! Verifique seu e-mail para confirmar.");
+        }
+
+    });
+
+
+    // =========================
+    // OBSERVAR LOGIN/LOGOUT
+    // =========================
+
+    supabaseClient.auth.onAuthStateChange(function(event, session){
+
+        if(session){
+            showApp();
+        }else{
+            showLogin();
+        }
+
+    });
+
+});
+
+</script> 
+    
+</body>
 </html>
